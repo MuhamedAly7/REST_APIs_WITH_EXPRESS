@@ -1,4 +1,5 @@
 const {body} = require('express-validator');
+const Course = require("../models/course_model");
 
 const validationSchema = () => {
     return [
@@ -7,7 +8,7 @@ const validationSchema = () => {
            .withMessage('title is required')
            .isLength({min: 2})
            .withMessage('title at least is 2 characters')
-           .custom(async (title) => {const existingTitle = await courses.find((course) => course.title === title); if (existingTitle) {
+           .custom(async (title) => {const existingTitle = await Course.findOne({title: title}); if (existingTitle) {
                throw new Error('Title must be unique');
              } return true;}), 
        body('price')

@@ -9,7 +9,7 @@ const generateToken = require('../utils/generateToken');
 
 const getAllUsers = asyncWrapper(async (req, res) => {
     
-    
+
     const query = req.query;
 
     const limit = query.limit || 10;
@@ -21,7 +21,7 @@ const getAllUsers = asyncWrapper(async (req, res) => {
 );
 
 const register = asyncWrapper( async (req, res, next) => {
-    const {firstName, lastName, email, password} = req.body;
+    const {firstName, lastName, email, password, role} = req.body;
 
     const olduser = await User.findOne({email: email});
 
@@ -37,11 +37,12 @@ const register = asyncWrapper( async (req, res, next) => {
         firstName,
         lastName,
         email,
-        password: hashedPassword
+        password: hashedPassword,
+        role
     });
 
     // Generate jwt token
-    const token = await generateToken({email: newUser.email, id: newUser._id});
+    const token = await generateToken({email: newUser.email, id: newUser._id, role: newUser.role});
     newUser.token = token;
     await newUser.save();
     res.status(201).json({status: httpStatusText.SUCCESS, data: {user: newUser}});
@@ -67,7 +68,7 @@ const login = asyncWrapper(async (req, res, next) => {
 
     if(user && matchedPassword) {
         // logged in successfully
-        const token = await generateToken({email: user.email, id: user._id});
+        const token = await generateToken({email: user.email, id: user._id, role: user.role});
         res.json({status: httpStatusText.SUCCESS, data: {token}});
     } else {
         const error = appError.create('something wrong!', 500, httpStatusText.ERROR);

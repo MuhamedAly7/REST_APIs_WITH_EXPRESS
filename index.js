@@ -18,8 +18,10 @@ app.use(express.json());
 
 app.use(cors());
 
-const coursesRouter = require('./routes/coursesRoutes');
+const coursesRouter = require('./routes/coursesRoutes'); // /api/courses
+const usersRouter = require('./routes/usersRoutes'); // /api/users
 app.use('/api/courses', coursesRouter);
+app.use('/api/users', usersRouter);
 
 // Global middileware for not found routes
 app.all('*', (req, res, next) => {
@@ -28,7 +30,7 @@ app.all('*', (req, res, next) => {
 
 // Global error handler
 app.use((error, req, res, next) => {
-    res.status(error.statusCode || 500).json({status: (error.StatusText || httpStatusText.ERROR), message: error.message, code: error.statusCode || 500, data: null});
+    res.status(error.statusCode || 500).json({status: error.StatusText || httpStatusText.ERROR, message: error.message, code: error.statusCode || 500, data: null});
 });
 
 app.listen(process.env.PORT, () => {

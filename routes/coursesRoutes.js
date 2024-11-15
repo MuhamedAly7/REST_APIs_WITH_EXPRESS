@@ -9,11 +9,12 @@ const coursesController = require('../controllers/CoursesController');
 // Body validator
 const {body} = require('express-validator');
 const { validationSchema } = require('../middlewares/validationSchema');
+const verifyToken = require('../middlewares/verifyToken');
 
 
 router.route('/')
             .get(coursesController.getAllCourses)
-            .post(validationSchema(), coursesController.addCourse);
+            .post(verifyToken, validationSchema(), coursesController.addCourse);
 
 
 router.route('/:courseId')
